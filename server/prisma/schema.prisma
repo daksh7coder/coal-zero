@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Mine {
+  id                      Int            @id @default(autoincrement())
+  name                    String
+  state                   String
+  mineType                String
+  workerCount             Int
+  existingAfforestationHa Float          @default(0)
+  createdAt               DateTime       @default(now())
+  logs                    ActivityLog[]
+  simulations             Simulation[]
+}
+
+model ActivityLog {
+  id                  Int      @id @default(autoincrement())
+  mineId              Int
+  mine                Mine     @relation(fields: [mineId], references: [id], onDelete: Cascade)
+  periodLabel         String
+  coalProducedTonnes  Float
+  excavationDieselL   Float
+  transportDieselL    Float
+  equipmentDieselL    Float
+  electricityKwh      Float
+  explosivesTonnes    Float
+  totalEmissionsTco2  Float
+  perCapitaTco2       Float
+  existingSinkTco2    Float
+  netGapTco2          Float
+  createdAt           DateTime @default(now())
+}
+
+model Simulation {
+  id                  Int      @id @default(autoincrement())
+  mineId              Int
+  mine                Mine     @relation(fields: [mineId], references: [id], onDelete: Cascade)
+  name                String
+  evShiftPct          Float    @default(0)
+  renewablePct        Float    @default(0)
+  methaneCapturePct   Float    @default(0)
+  creditPriceInr      Float    @default(1200)
+  reducedTco2         Float
+  remainingGapTco2    Float
+  requiredLandHa      Float
+  requiredTrees       Int
+  creditValueInr      Float
+  createdAt           DateTime @default(now())
+}
